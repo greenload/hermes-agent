@@ -159,6 +159,7 @@ export interface SubscriptionStateResponse {
   can_change_plan: boolean        // role gate (ADMIN/OWNER), from NAS
   org_name: string | null
   role: string | null
+  context: 'personal' | 'team'   // personal account vs team/org terminal
   current: {
     tier_id: string | null        // null = free (no active sub)
     tier_name: string | null

@@ -5620,6 +5620,7 @@ def _serialize_subscription_state(state) -> dict:
         "can_change_plan": state.can_change_plan,
         "org_name": state.org_name,
         "role": state.role,
+        "context": state.context,
         "current": current,
         "tiers": tiers,
         "portal_url": state.portal_url,

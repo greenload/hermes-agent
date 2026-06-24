@@ -73,6 +73,7 @@ class SubscriptionState:
     logged_in: bool
     org_name: Optional[str] = None
     role: Optional[str] = None  # "OWNER" | "ADMIN" | "MEMBER"
+    context: str = "personal"  # "personal" | "team"
     current: Optional[CurrentSubscription] = None
     tiers: tuple[SubscriptionTier, ...] = ()
     portal_url: Optional[str] = None
@@ -143,10 +144,14 @@ def subscription_state_from_payload(
         if parsed is not None:
             tiers.append(parsed)
 
+    raw_context = payload.get("context")
+    context = raw_context if raw_context in ("personal", "team") else "personal"
+
     return SubscriptionState(
         logged_in=True,
         org_name=org.get("name"),
         role=org.get("role"),
+        context=context,
         current=_parse_current(payload.get("current")),
         tiers=tuple(tiers),
         portal_url=portal_url,

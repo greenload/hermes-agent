@@ -25,6 +25,15 @@ interface SubscriptionOverlayProps {
 export function SubscriptionOverlay({ onClose, onPatch, overlay, t }: SubscriptionOverlayProps) {
   const { ctx, screen, state: s } = overlay
 
+  // Team context: no tier picker — teams run on shared credits; redirect to /topup.
+  if (s.context === 'team') {
+    return (
+      <Box borderColor={t.color.accent} borderStyle="round" flexDirection="column" paddingX={1}>
+        <TeamContextScreen onClose={onClose} s={s} t={t} />
+      </Box>
+    )
+  }
+
   return (
     <Box borderColor={t.color.accent} borderStyle="round" flexDirection="column" paddingX={1}>
       {screen === 'overview' && <OverviewScreen ctx={ctx} onClose={onClose} onPatch={onPatch} s={s} t={t} />}
@@ -225,6 +234,47 @@ function OverviewScreen({ ctx, onClose, onPatch, s, t }: ScreenProps) {
 
       <Text />
       {footer(`↑/↓ select · 1-${tierItems.length} quick pick · Enter confirm · Esc close`, t)}
+    </Box>
+  )
+}
+
+// ── Screen: Team context (no tier picker — teams use shared credits) ──
+
+interface TeamContextScreenProps {
+  onClose: () => void
+  s: SubscriptionStateResponse
+  t: Theme
+}
+
+function TeamContextScreen({ onClose, s, t }: TeamContextScreenProps) {
+  useInput((_ch, key) => {
+    if (key.escape || key.return) {
+      return onClose()
+    }
+  })
+
+  return (
+    <Box flexDirection="column">
+      <Text bold color={t.color.accent}>
+        Team subscription
+      </Text>
+      {s.org_name && (
+        <Text color={t.color.muted}>
+          Org: {s.org_name}
+          {s.role ? ` · ${s.role}` : ''}
+        </Text>
+      )}
+      <Text />
+      <Text color={t.color.text}>
+        This terminal is connected to {s.org_name ?? 'a team org'}. Teams run on shared credits
+        — use /topup to add funds.
+      </Text>
+      <Text color={t.color.muted}>
+        Personal subscriptions live on your personal account.
+      </Text>
+
+      <Text />
+      {footer('Enter/Esc close', t)}
     </Box>
   )
 }
